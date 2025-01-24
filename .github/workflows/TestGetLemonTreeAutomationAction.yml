@@ -1,29 +1,21 @@
  # download Lemontree.Automation on a runner and setup the license
-name: setup-LemonTree.Automation Sample Workflow
+name: Lemon Tree Automation Demo script
+
 on:
-    push:
-     
+  push:
+    branches:
+      - main
+
 jobs:
-    setup-LemonTree: 
-      defaults:
-        run:
-          shell: pwsh
-      runs-on: [windows-latest] 
-      timeout-minutes: 15
-      steps:  
-        - uses: actions/checkout@v4
-          with:
-            lfs: true
-            fetch-depth: 0
+  test-script:
+    runs-on: windows-latest
 
-        - name: GetLTA
-          uses: LieberLieber/setup-LemonTree.Automation@v6
-          id: GetLTA
-          with:
-           License: ${{secrets.LTALICENSE}} 
-           #ExeLocation &"${{steps.GetLTA.outputs.LemonTreeAutomationExecutable}}"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-        # first simple use of LemonTree.Automation
-        - name: ConsistencyCheck
-          run: |
-            &"${{steps.GetLTA.outputs.LemonTreeAutomationExecutable}}" ConsistencyCheck --Model "model.qeax"
+    - name: Run getLTA.ps1 script
+      shell: pwsh  # Use PowerShell Core (pwsh) on the runner
+      run: |
+        Set-ExecutionPolicy RemoteSigned -Scope Process -Force
+            .\getLTA.ps1 -License .\LTALicense\license.lic -model .\DemoModel.eapx 
